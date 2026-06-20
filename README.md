@@ -4,6 +4,24 @@ A reusable starting point for small installable web apps that run full-screen
 on iPhone and Android — no app store, no native code. Vite + TypeScript, with
 the service worker, manifest and all icons generated for you.
 
+## Project structure
+
+```
+template/
+├── app.config.json        Name, colors, description — single source of truth
+├── public/icon.svg        Source icon; every PNG + Apple splash derives from it
+├── index.html             iOS full-screen meta tags (manifest/icons auto-injected)
+├── src/
+│   ├── main.ts            Entry point; registers the service worker
+│   ├── app.ts             Demo checklist app — replace with your own
+│   ├── lib/store.ts       Tiny persisted reactive store + the sync seam
+│   └── style.css          Mobile-first, dark mode, notch-safe
+├── scripts/create-app.mjs The `pnpm new` generator
+├── vite.config.ts         Wires up vite-plugin-pwa from app.config.json
+├── pwa-assets.config.ts   Icon/splash generation settings
+└── netlify.toml / vercel.json   Deploy configs (pick one)
+```
+
 ## Spin up a new app
 
 From inside this template folder:
