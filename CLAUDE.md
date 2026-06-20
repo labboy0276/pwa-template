@@ -47,10 +47,21 @@ There are no tests or linters configured. Verify changes with `pnpm build`.
 ## The generator (`scripts/create-app.mjs`)
 
 `pnpm new` copies the template to a sibling folder, skipping
-`node_modules`, `dist`, `dev-dist`, `.git`, and `scripts/`. It rewrites
-`app.config.json` and `package.json` (sets `name`, drops the `new` script),
-then runs `pnpm install` and `git init`. If you add a top-level file or folder
-that should NOT be copied into new apps, add it to the `SKIP` set there.
+`node_modules`, `dist`, `dev-dist`, `.git`, `scripts/`, and `themes.html`. It
+rewrites `app.config.json` and `package.json` (sets `name`, drops the `new` and
+`themes` scripts), then runs `pnpm install` and `git init`. If you add a
+top-level file or folder that should NOT be copied into new apps, add it to the
+`SKIP` set there.
+
+**Theme picker:** the color step reads `scripts/themes.json` (the single source
+of truth) and lets the user pick by number or type a custom `#hex`. The chosen
+`themeColor` is written to `app.config.json` **and** patched into
+`src/style.css` (`--accent`) and `public/icon.svg` (the `<rect>` fill) — this is
+where the "three places hold the accent color" duplication gets reconciled at
+scaffold time. `themes.html` is a generated visual preview
+(`pnpm themes` → `scripts/build-theme-preview.mjs`); edit `themes.json`, then
+regenerate. Keep the swatch accents dark enough for white text (header/buttons
+use `#fff`).
 
 ## Gotchas
 

@@ -1,0 +1,18 @@
+[
+  { "name": "Indigo",   "themeColor": "#4f46e5", "backgroundColor": "#ffffff" },
+  { "name": "Blue",     "themeColor": "#2563eb", "backgroundColor": "#ffffff" },
+  { "name": "Sky",      "themeColor": "#0369a1", "backgroundColor": "#ffffff" },
+  { "name": "Teal",     "themeColor": "#0f766e", "backgroundColor": "#ffffff" },
+  { "name": "Emerald",  "themeColor": "#047857", "backgroundColor": "#ffffff" },
+  { "name": "Green",    "themeColor": "#15803d", "backgroundColor": "#ffffff" },
+  { "name": "Amber",    "themeColor": "#b45309", "backgroundColor": "#ffffff" },
+  { "name": "Orange",   "themeColor": "#c2410c", "backgroundColor": "#ffffff" },
+  { "name": "Red",      "themeColor": "#b91c1c", "backgroundColor": "#ffffff" },
+  { "name": "Rose",     "themeColor": "#be123c", "backgroundColor": "#ffffff" },
+  { "name": "Pink",     "themeColor": "#be185d", "backgroundColor": "#ffffff" },
+  { "name": "Violet",   "themeColor": "#7c3aed", "backgroundColor": "#ffffff" },
+  { "name": "Fuchsia",  "themeColor": "#a21caf", "backgroundColor": "#ffffff" },
+  { "name": "Slate",    "themeColor": "#475569", "backgroundColor": "#ffffff" },
+  { "name": "Midnight", "themeColor": "#6366f1", "backgroundColor": "#0f0f14" },
+  { "name": "Carbon",   "themeColor": "#10b981", "backgroundColor": "#0f0f14" }
+]

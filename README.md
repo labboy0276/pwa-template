@@ -30,8 +30,9 @@ From inside this template folder:
 pnpm new
 ```
 
-It asks for a name, colors, etc., then creates a **sibling folder** (next to
-`template/`), installs deps and inits git. Then:
+It asks for a name and a **theme** (pick a number from the color palette), then
+creates a **sibling folder** (next to `template/`), installs deps and inits git.
+Then:
 
 ```bash
 cd ../your-app
@@ -39,6 +40,12 @@ pnpm dev
 ```
 
 > First time only: run `pnpm install` here in `template/` so `pnpm new` works.
+
+**Previewing themes:** open `themes.html` in a browser to see the palette as
+swatches, then enter the number you want when prompted. The list lives in
+`scripts/themes.json`; run `pnpm themes` to regenerate the preview after editing
+it. You can also type a custom `#hex` instead of a number. The chosen color is
+applied to the manifest/status bar, the CSS accent, **and** the icon in one go.
 
 ## Develop
 

@@ -8,6 +8,7 @@
     "build": "tsc && vite build",
     "preview": "vite preview --host",
     "generate-icons": "pwa-assets-generator",
+    "themes": "node scripts/build-theme-preview.mjs",
     "new": "node scripts/create-app.mjs"
   },
   "devDependencies": {
