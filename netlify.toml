@@ -1,0 +1,16 @@
+# Netlify deploy config. Connect the repo at app.netlify.com and it just works.
+[build]
+  command = "pnpm build"
+  publish = "dist"
+
+# SPA fallback: serve index.html for any client-side route.
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+# Never cache the service worker — clients must always see the newest one.
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "public, max-age=0, must-revalidate"

@@ -1,0 +1,20 @@
+{
+  "name": "pwa-template",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview --host",
+    "generate-icons": "pwa-assets-generator",
+    "new": "node scripts/create-app.mjs"
+  },
+  "devDependencies": {
+    "@vite-pwa/assets-generator": "^0.2.6",
+    "typescript": "^5.7.2",
+    "vite": "^6.0.7",
+    "vite-plugin-pwa": "^0.21.1",
+    "workbox-window": "^7.4.1"
+  }
+}

@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <!-- Source image for all generated PWA icons. Replace with your own art;
+       keep it square and roughly 512x512 or larger. -->
+  <rect width="512" height="512" rx="112" fill="#4f46e5" />
+  <g fill="none" stroke="#ffffff" stroke-width="26" stroke-linecap="round" stroke-linejoin="round">
+    <!-- three checkbox ticks -->
+    <path d="M150 168 l28 28 l52 -60" />
+    <path d="M150 264 l28 28 l52 -60" />
+    <path d="M150 360 l28 28 l52 -60" />
+    <!-- three list lines -->
+    <path d="M286 180 h96" />
+    <path d="M286 276 h96" />
+    <path d="M286 372 h96" />
+  </g>
+</svg>

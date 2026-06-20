@@ -1,0 +1,12 @@
+node_modules
+dist
+dev-dist
+*.local
+.DS_Store
+.vite
+
+# Generated icons (run `pnpm generate-icons` to recreate them)
+public/pwa-*.png
+public/apple-touch-icon*.png
+public/maskable-icon*.png
+public/favicon.ico
