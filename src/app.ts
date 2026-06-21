@@ -17,7 +17,7 @@ const items = createStore<Item[]>('items', [])
 export function mountApp(root: HTMLElement) {
   root.innerHTML = `
     <header class="header">
-      <h1>${app.name}</h1>
+      <h1>${escapeHtml(app.name)}</h1>
     </header>
 
     <main class="main">

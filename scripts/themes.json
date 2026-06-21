@@ -12,7 +12,5 @@
   { "name": "Pink",     "themeColor": "#be185d", "backgroundColor": "#ffffff" },
   { "name": "Violet",   "themeColor": "#7c3aed", "backgroundColor": "#ffffff" },
   { "name": "Fuchsia",  "themeColor": "#a21caf", "backgroundColor": "#ffffff" },
-  { "name": "Slate",    "themeColor": "#475569", "backgroundColor": "#ffffff" },
-  { "name": "Midnight", "themeColor": "#6366f1", "backgroundColor": "#0f0f14" },
-  { "name": "Carbon",   "themeColor": "#10b981", "backgroundColor": "#0f0f14" }
+  { "name": "Slate",    "themeColor": "#475569", "backgroundColor": "#ffffff" }
 ]

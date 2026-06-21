@@ -43,7 +43,6 @@ export default defineConfig({
         return html
           .replaceAll('%APP_NAME%', app.name)
           .replaceAll('%SHORT_NAME%', app.shortName)
-          .replaceAll('%THEME_COLOR%', app.themeColor)
           .replaceAll('%DESCRIPTION%', app.description)
       },
     },

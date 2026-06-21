@@ -14,6 +14,8 @@ export interface Store<T> {
   update(fn: (value: T) => T): void
   /** Calls listener immediately with the current value, returns an unsubscribe. */
   subscribe(listener: Listener<T>): () => void
+  /** Drop all subscribers and stop listening for cross-tab updates. */
+  destroy(): void
 }
 
 export function createStore<T>(key: string, initial: T): Store<T> {
@@ -25,13 +27,18 @@ export function createStore<T>(key: string, initial: T): Store<T> {
     for (const l of listeners) l(value)
   }
 
-  // Keep other open tabs / windows of the same app in sync.
-  window.addEventListener('storage', (e) => {
-    if (e.key === key && e.newValue) {
+  // Keep other open tabs / windows of the same app in sync. Named so it can be
+  // removed in destroy(); guarded so a bad value from another writer can't throw.
+  function onStorage(e: StorageEvent) {
+    if (e.key !== key || e.newValue === null) return
+    try {
       value = JSON.parse(e.newValue) as T
-      for (const l of listeners) l(value)
+    } catch {
+      return
     }
-  })
+    for (const l of listeners) l(value)
+  }
+  window.addEventListener('storage', onStorage)
 
   return {
     get: () => value,
@@ -46,7 +53,13 @@ export function createStore<T>(key: string, initial: T): Store<T> {
     subscribe(listener) {
       listeners.add(listener)
       listener(value)
-      return () => listeners.delete(listener)
+      return () => {
+        listeners.delete(listener)
+      }
+    },
+    destroy() {
+      window.removeEventListener('storage', onStorage)
+      listeners.clear()
     },
   }
 }

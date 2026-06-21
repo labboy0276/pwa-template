@@ -11,19 +11,27 @@ import { fileURLToPath } from 'node:url'
 const here = dirname(fileURLToPath(import.meta.url))
 const themes = JSON.parse(await readFile(resolve(here, 'themes.json'), 'utf-8'))
 
+// Escape values from themes.json before injecting them into markup/attributes.
+const esc = (s) =>
+  String(s).replace(
+    /[&<>"']/g,
+    (c) =>
+      ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c],
+  )
+
 const cards = themes
   .map((t, i) => {
     const dark = t.backgroundColor.toLowerCase() !== '#ffffff'
     return `      <figure class="card">
-        <div class="swatch" style="background:${t.themeColor}">
+        <div class="swatch" style="background:${esc(t.themeColor)}">
           <span class="num">${i + 1}</span>
           <span class="sample">Aa</span>
         </div>
         <figcaption>
-          <strong>${t.name}</strong>
-          <code>${t.themeColor}</code>
-          <span class="bg" style="background:${t.backgroundColor}"></span>
-          <small>splash ${t.backgroundColor}${dark ? ' · dark' : ''}</small>
+          <strong>${esc(t.name)}</strong>
+          <code>${esc(t.themeColor)}</code>
+          <span class="bg" style="background:${esc(t.backgroundColor)}"></span>
+          <small>splash ${esc(t.backgroundColor)}${dark ? ' · dark' : ''}</small>
         </figcaption>
       </figure>`
   })

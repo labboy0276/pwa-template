@@ -41,9 +41,28 @@ const slugify = (s) =>
     .replace(/[^a-z0-9]+/g, '-')
     .replace(/^-+|-+$/g, '')
 
-async function replaceInFile(path, pattern, replacement) {
+const HEX = /^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6})$/
+
+// Prompt until a valid #rgb / #rrggbb hex is given (Enter accepts the default).
+async function askHex(q, def) {
+  for (;;) {
+    const v = await ask(q, def)
+    if (HEX.test(v)) return v
+    console.log(`  "${v}" isn't a valid hex color (e.g. #4f46e5). Try again.`)
+  }
+}
+
+// Replace `pattern` in a file. `replacer` is a function so the chosen color is
+// never reinterpreted as a $-replacement pattern. Warns if nothing matched.
+async function replaceInFile(path, pattern, replacer) {
   const text = await readFile(path, 'utf-8')
-  await writeFile(path, text.replace(pattern, replacement))
+  let matched = false
+  const next = text.replace(pattern, (...args) => {
+    matched = true
+    return replacer(...args)
+  })
+  if (!matched) console.warn(`  ⚠ couldn't find the color to update in ${path}`)
+  await writeFile(path, next)
 }
 
 // Show the palette and let the user pick by number — or type a custom #hex.
@@ -58,8 +77,9 @@ async function pickTheme() {
   const ans = await ask('Theme (number, or a #hex)', '1')
 
   if (ans.startsWith('#')) {
-    const backgroundColor = await ask('Splash background (hex)', '#ffffff')
-    return { themeColor: ans, backgroundColor }
+    const themeColor = HEX.test(ans) ? ans : await askHex('Theme color (hex)', '#4f46e5')
+    const backgroundColor = await askHex('Splash background (hex)', '#ffffff')
+    return { themeColor, backgroundColor }
   }
   const picked = themes[Number(ans) - 1] ?? themes[0]
   return { themeColor: picked.themeColor, backgroundColor: picked.backgroundColor }
@@ -68,6 +88,10 @@ async function pickTheme() {
 try {
   const name = await ask('App name', 'My App')
   const slug = slugify(await ask('Folder name', slugify(name)))
+  if (!slug) {
+    console.error('\n✗ Folder name must contain at least one letter or number.')
+    process.exit(1)
+  }
   const shortName = await ask('Short name (home screen, keep it short)', name)
   const description = await ask('Description', `${name} — a PWA`)
   const { themeColor, backgroundColor } = await pickTheme()
@@ -103,12 +127,12 @@ try {
   await replaceInFile(
     resolve(dest, 'src/style.css'),
     /(--accent:\s*)#[0-9a-fA-F]{3,8}/,
-    `$1${themeColor}`,
+    (_m, prefix) => `${prefix}${themeColor}`,
   )
   await replaceInFile(
     resolve(dest, 'public/icon.svg'),
     /(<rect[^>]*\bfill=")#[0-9a-fA-F]{3,8}(")/,
-    `$1${themeColor}$2`,
+    (_m, open, close) => `${open}${themeColor}${close}`,
   )
 
   // package.json — rename, drop the generator script (apps don't scaffold).
@@ -123,8 +147,20 @@ try {
   rl.close()
 
   console.log('Installing dependencies …')
-  spawnSync('pnpm', ['install'], { cwd: dest, stdio: 'inherit' })
-  spawnSync('git', ['init', '-q'], { cwd: dest, stdio: 'inherit' })
+  const install = spawnSync('pnpm', ['install'], { cwd: dest, stdio: 'inherit' })
+  if (install.error || install.status !== 0) {
+    const why = install.error
+      ? install.error.message
+      : `exit code ${install.status}`
+    console.error(`\n⚠ pnpm install didn't finish (${why}).`)
+    console.error(`  The app was created — finish setup manually:\n    cd ${dest}\n    pnpm install\n`)
+    process.exit(1)
+  }
+
+  const gitInit = spawnSync('git', ['init', '-q'], { cwd: dest, stdio: 'inherit' })
+  if (gitInit.error || gitInit.status !== 0) {
+    console.warn('  (git init was skipped — run `git init` yourself if you want a repo)')
+  }
 
   console.log(`\n✓ Done!\n\n  cd ${resolve(appsRoot, slug)}\n  pnpm dev\n`)
 } catch (err) {
