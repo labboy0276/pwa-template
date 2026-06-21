@@ -2,7 +2,9 @@
 
 A reusable starting point for small installable web apps that run full-screen
 on iPhone and Android — no app store, no native code. Vite + TypeScript, with
-the service worker, manifest and all icons generated for you.
+the service worker, manifest and all icons generated for you. Apps work offline
+out of the box, come with optional cross-device sync (Supabase) built in, and
+ship with a Vitest test setup.
 
 ## Project structure
 
@@ -124,3 +126,7 @@ First-time setup:
 Data is **personal** by default (each signed-in user sees only their own rows).
 To make an app's data *shared* between people, see the note in
 `supabase/schema.sql`. Sync is last-write-wins per store key.
+
+> An app's **name** (`app.config.json`) sets its data namespace, so renaming an
+> app after it has synced data points it at a new, empty bucket. Pick the name
+> before first sync.

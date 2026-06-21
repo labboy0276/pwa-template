@@ -31,10 +31,11 @@ example and the store's regression suite. Test files live under `src`, so `tsc`
 ## Architecture
 
 - **`app.config.json` is the single source of truth** for app identity (name,
-  shortName, description, themeColor, backgroundColor). It feeds three places:
-  the web manifest and the `%PLACEHOLDERS%` in `index.html` (both via
-  `vite.config.ts`), and `src/app.ts` (imported directly). Change identity
-  here, not in scattered files.
+  shortName, description, themeColor, backgroundColor). It feeds: the web
+  manifest and the `%PLACEHOLDERS%` in `index.html` (both via `vite.config.ts`),
+  `src/app.ts` (imported directly), and `src/lib/supabase.ts` (the `name`
+  becomes `APP_ID`, the synced-data namespace). Change identity here, not in
+  scattered files.
 - **`vite.config.ts`** reads `app.config.json`, configures `vite-plugin-pwa`
   (manifest + `autoUpdate` service worker + icon generation), and has a small
   inline plugin that replaces `%APP_NAME%` / `%SHORT_NAME%` / `%DESCRIPTION%`
@@ -97,6 +98,9 @@ use `#fff`).
 - **Supabase magic links need the origin allow-listed.** Sign-in fails silently
   if the dev/prod URL isn't under Supabase Auth → URL Configuration → Redirect
   URLs. The anon key is publishable (safe in the client); security is RLS.
+- **Renaming an app changes its synced-data namespace.** `APP_ID` is derived
+  from `app.config.json` `name`; changing the name after data exists points the
+  app at a new, empty `kv` bucket. Rename before first sync, or migrate rows.
 - Deploy is host-agnostic static `dist/`; `netlify.toml` and `vercel.json` both
   set SPA routing and no-cache headers for `sw.js`. Keep those in sync if you
   change build output.
