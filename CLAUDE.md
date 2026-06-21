@@ -12,10 +12,21 @@ pnpm dev --host       # also serve on the LAN
 pnpm build            # tsc typecheck + vite build → dist/ (also generates icons)
 pnpm preview          # serve the production build
 pnpm generate-icons   # regenerate icons from public/icon.svg
+pnpm test             # run the Vitest suite once
+pnpm test:watch       # Vitest in watch mode
 pnpm new              # scaffold a new app into a sibling folder
 ```
 
-There are no tests or linters configured. Verify changes with `pnpm build`.
+No linter is configured. Verify changes with `pnpm test` and `pnpm build`.
+
+## Testing
+
+Vitest + jsdom. Config is `vitest.config.ts` (separate from `vite.config.ts` so
+the PWA plugin doesn't run in tests; jsdom provides the DOM + `localStorage`).
+Tests are `src/**/*.{test,spec}.ts`; `src/lib/store.test.ts` is the worked
+example and the store's regression suite. Test files live under `src`, so `tsc`
+(via `pnpm build`) typechecks them too — but `vite build` never bundles them
+(nothing imports them from the entry).
 
 ## Architecture
 

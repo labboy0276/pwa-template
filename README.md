@@ -17,7 +17,9 @@ template/
 │   ├── lib/store.ts       Reactive store: localStorage cache + Supabase sync
 │   ├── lib/supabase.ts    Supabase client (reads .env; null when unset)
 │   ├── lib/auth.ts        Magic-link sign-in screen + sign-out
+│   ├── lib/store.test.ts  Example Vitest suite (store regression tests)
 │   └── style.css          Mobile-first, dark mode, notch-safe
+├── vitest.config.ts       Vitest + jsdom config
 ├── supabase/schema.sql    Run once in your Supabase project (the kv table + RLS)
 ├── .env.example           Copy to .env and add your Supabase keys
 ├── scripts/create-app.mjs The `pnpm new` generator
@@ -58,7 +60,15 @@ pnpm dev              # local dev server (http://localhost:5173)
 pnpm dev --host       # also expose on your LAN to open on your phone
 pnpm build            # type-check + production build into dist/
 pnpm preview          # serve the production build locally
+pnpm test             # run the test suite once (pnpm test:watch to watch)
 ```
+
+## Testing
+
+[Vitest](https://vitest.dev) + jsdom, configured in `vitest.config.ts`. Put
+tests next to the code as `*.test.ts`; `src/lib/store.test.ts` is a working
+example. Run `pnpm test` (once) or `pnpm test:watch` (during development). Every
+scaffolded app inherits this setup.
 
 ## Make it yours
 
