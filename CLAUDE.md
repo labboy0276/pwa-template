@@ -33,11 +33,20 @@ There are no tests or linters configured. Verify changes with `pnpm build`.
   (config in `pwa-assets.config.ts`) at build time, emitted into `dist/`. The
   matching `<link>` tags (manifest, favicon, apple-touch-icon) are injected
   automatically — don't hand-write them in `index.html`.
-- **State**: `src/lib/store.ts` is a ~60-line persisted reactive store
-  (no framework). `createStore(key, initial)` returns get/set/update/subscribe
-  and saves to `localStorage`. The `load()`/`save()` functions at the bottom
-  are the **sync seam**: swap them for `fetch()` to a backend when an app needs
-  cross-device sync. Don't replace the store with a framework for small apps.
+- **State**: `src/lib/store.ts` is a small reactive store (no framework).
+  `createStore(key, initial)` returns get/set/update/subscribe/destroy. Three
+  persistence layers: `localStorage` (instant/offline cache) → Supabase (synced
+  source of truth) → realtime (live cross-device updates). Don't replace it with
+  a framework for small apps.
+- **Supabase sync is built in but optional.** `src/lib/supabase.ts` builds a
+  client from `VITE_SUPABASE_URL` / `VITE_SUPABASE_ANON_KEY` (in `.env`); when
+  those are unset, `supabase` is `null` and the store degrades to
+  localStorage-only with no sign-in. When set, `src/lib/auth.ts` gates the app
+  behind a magic-link sign-in (`main.ts` calls `ensureAuth` then dynamically
+  imports `./app`, so the store only spins up once authenticated). All apps
+  share one Supabase project; data is namespaced by `APP_ID` (derived from
+  `app.config.json` name) in a generic `kv` table. `supabase/schema.sql` makes
+  data personal (per-user RLS); flip the policy there for shared data.
 - **`src/app.ts`** is a demo checklist proving the store/offline/install flow.
   It's meant to be replaced per app, not extended into a framework.
 - **iOS specifics** live in `index.html`: `viewport-fit=cover` and the
@@ -46,12 +55,13 @@ There are no tests or linters configured. Verify changes with `pnpm build`.
 
 ## The generator (`scripts/create-app.mjs`)
 
-`pnpm new` copies the template to a sibling folder, skipping
-`node_modules`, `dist`, `dev-dist`, `.git`, `scripts/`, and `themes.html`. It
+`pnpm new` copies the template to a sibling folder, skipping `node_modules`,
+`dist`, `dev-dist`, `.git`, `scripts/`, `themes.html`, and `.env` (secrets). It
 rewrites `app.config.json` and `package.json` (sets `name`, drops the `new` and
-`themes` scripts), then runs `pnpm install` and `git init`. If you add a
-top-level file or folder that should NOT be copied into new apps, add it to the
-`SKIP` set there.
+`themes` scripts), then runs `pnpm install` and `git init`. New apps inherit the
+Supabase wiring (`src/lib/*`, `supabase/schema.sql`, `.env.example`) and the
+shared deps. If you add a top-level file or folder that should NOT be copied
+into new apps, add it to the `SKIP` set there.
 
 **Theme picker:** the color step reads `scripts/themes.json` (the single source
 of truth) and lets the user pick by number or type a custom `#hex`. The chosen
@@ -73,6 +83,9 @@ use `#fff`).
   Test real install behavior on a deployed (Netlify/Vercel) URL.
 - **`crypto.randomUUID()`** (used in `app.ts`) requires a secure context —
   fine on localhost and HTTPS.
+- **Supabase magic links need the origin allow-listed.** Sign-in fails silently
+  if the dev/prod URL isn't under Supabase Auth → URL Configuration → Redirect
+  URLs. The anon key is publishable (safe in the client); security is RLS.
 - Deploy is host-agnostic static `dist/`; `netlify.toml` and `vercel.json` both
   set SPA routing and no-cache headers for `sw.js`. Keep those in sync if you
   change build output.

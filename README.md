@@ -12,10 +12,14 @@ template/
 ├── public/icon.svg        Source icon; every PNG + Apple splash derives from it
 ├── index.html             iOS full-screen meta tags (manifest/icons auto-injected)
 ├── src/
-│   ├── main.ts            Entry point; registers the service worker
+│   ├── main.ts            Entry point; SW + (optional) sign-in gate
 │   ├── app.ts             Demo checklist app — replace with your own
-│   ├── lib/store.ts       Tiny persisted reactive store + the sync seam
+│   ├── lib/store.ts       Reactive store: localStorage cache + Supabase sync
+│   ├── lib/supabase.ts    Supabase client (reads .env; null when unset)
+│   ├── lib/auth.ts        Magic-link sign-in screen + sign-out
 │   └── style.css          Mobile-first, dark mode, notch-safe
+├── supabase/schema.sql    Run once in your Supabase project (the kv table + RLS)
+├── .env.example           Copy to .env and add your Supabase keys
 ├── scripts/create-app.mjs The `pnpm new` generator
 ├── vite.config.ts         Wires up vite-plugin-pwa from app.config.json
 ├── pwa-assets.config.ts   Icon/splash generation settings
@@ -63,7 +67,8 @@ pnpm preview          # serve the production build locally
 - **Icon**: replace `public/icon.svg`, then `pnpm generate-icons` (build does
   this automatically). Every icon + Apple splash screen is derived from it.
 - **The app itself**: `src/app.ts` is a demo checklist — replace it. State
-  lives in `src/lib/store.ts`, a tiny persisted reactive store.
+  lives in `src/lib/store.ts` via `createStore(key, initial)` — it persists to
+  `localStorage` and, when Supabase is configured, syncs across devices.
 
 ## Installing on a phone
 
@@ -82,9 +87,30 @@ pre-configured (`netlify.toml` / `vercel.json`) with build command `pnpm build`,
 output `dist/`, SPA routing and correct service-worker caching. Free HTTPS
 included.
 
-## Adding cross-device sync later
+## Cross-device sync (Supabase)
 
-Apps are **local-first**: data is saved per device in `localStorage`. When an
-app needs to share data between phones, swap the `load()` / `save()` functions
-at the bottom of `src/lib/store.ts` for `fetch()` calls to a backend
-(a Netlify/Vercel serverless function, Supabase, etc.). Nothing else changes.
+Sync is **built in but optional**. With no `.env`, an app runs local-only
+(`localStorage`, no sign-in) — fine for offline, single-device apps. Add
+Supabase keys and the same app gains a magic-link sign-in and live sync across
+devices, with `localStorage` staying as an instant offline cache.
+
+**One Supabase project ("PWAs") backs all your apps.** Each app's data is kept
+separate by its name (the `app` column in the shared `kv` table), so you set up
+Supabase once and reuse the same keys everywhere.
+
+First-time setup:
+
+1. Create a Supabase project (name it e.g. `PWAs`).
+2. **SQL Editor →** paste `supabase/schema.sql` → **Run**. (One per-user `kv`
+   table with row-level security + realtime. Run once for the whole project.)
+3. **Project Settings → API:** copy the **Project URL** and **anon public key**.
+4. `cp .env.example .env` and paste those two values in.
+5. **Authentication → URL Configuration:** set your site URL and add the
+   redirect URLs you'll sign in from (e.g. `http://localhost:5173` and your
+   deployed URL). The magic link only works for origins on this list.
+6. On Netlify/Vercel, add `VITE_SUPABASE_URL` and `VITE_SUPABASE_ANON_KEY` as
+   environment variables, then redeploy.
+
+Data is **personal** by default (each signed-in user sees only their own rows).
+To make an app's data *shared* between people, see the note in
+`supabase/schema.sql`. Sync is last-write-wins per store key.

@@ -162,3 +162,80 @@ body {
 .empty[hidden] {
   display: none;
 }
+
+/* --- Supabase sign-in screen + sign-out --- */
+
+.auth {
+  min-height: 100dvh;
+  display: grid;
+  place-items: center;
+  padding: 1.5rem;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+}
+
+.auth-card h1 {
+  font-size: 1.3rem;
+}
+
+.auth-card p {
+  font-size: 0.9rem;
+  color: var(--muted);
+}
+
+.auth-card input {
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  color: var(--text);
+  background: var(--bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.auth-card button {
+  padding: 0.8rem 1rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #fff;
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  cursor: pointer;
+}
+
+.auth-card button:disabled {
+  opacity: 0.6;
+}
+
+.auth-msg {
+  color: var(--text);
+}
+
+.sign-out {
+  position: fixed;
+  left: calc(env(safe-area-inset-left) + 0.5rem);
+  bottom: calc(env(safe-area-inset-bottom) + 0.5rem);
+  font-size: 0.75rem;
+  color: var(--muted);
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  padding: 0.35rem 0.7rem;
+  opacity: 0.55;
+  cursor: pointer;
+  z-index: 50;
+}
+
+.sign-out:hover {
+  opacity: 1;
+}

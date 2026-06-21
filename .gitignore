@@ -5,6 +5,11 @@ dev-dist
 .DS_Store
 .vite
 
+# Local Supabase keys — never commit. Keep .env.example as the template.
+.env
+.env.*
+!.env.example
+
 # Generated icons (run `pnpm generate-icons` to recreate them)
 public/pwa-*.png
 public/apple-touch-icon*.png

@@ -17,5 +17,8 @@
     "vite": "^6.0.7",
     "vite-plugin-pwa": "^0.21.1",
     "workbox-window": "^7.4.1"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.108.2"
   }
 }

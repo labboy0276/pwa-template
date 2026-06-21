@@ -23,6 +23,7 @@ const SKIP = new Set([
   '.git',
   'scripts',
   'themes.html',
+  '.env', // never copy local secrets; new apps start from .env.example
 ])
 
 const themes = JSON.parse(
